@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add / Edit Mobile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 20px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .save-btn {
+      background: #28a745;
+      color: white;
+    }
+    .save-btn:hover {
+      background: #218838;
+    }
+    .cancel-btn {
+      background: #dc3545;
+      color: white;
+    }
+    .cancel-btn:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="formTitle">➕ Add Mobile</h1>
+
+    <form id="mobileForm">
+      <label for="id">ID:</label>
+      <input type="text" id="id" name="id" required>
+
+      <label for="brand">Brand:</label>
+      <input type="text" id="brand" name="brand" required>
+
+      <label for="model">Model:</label>
+      <input type="text" id="model" name="model" required>
+
+      <label for="user">User:</label>
+      <input type="text" id="user" name="user" required>
+
+      <label for="status">Status:</label>
+      <select id="status" name="status">
+        <option value="Working">Working</option>
+        <option value="Not Working">Not Working</option>
+        <option value="Damaged">Damaged</option>
+        <option value="Repair">Repair</option>
+      </select>
+
+      <div class="button-group">
+        <button type="submit" class="save-btn">💾 Save Mobile</button>
+        <button type="button" class="cancel-btn" onclick="cancelAction()">❌ Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("mobileForm");
+    const editIndex = localStorage.getItem("editIndex");
+
+    if (editIndex !== null) {
+      const mobiles = JSON.parse(localStorage.getItem("mobiles")) || [];
+      const mobile = mobiles[editIndex];
+
+      if (mobile) {
+        document.getElementById("id").value = mobile.id;
+        document.getElementById("brand").value = mobile.brand;
+        document.getElementById("model").value = mobile.model;
+        document.getElementById("user").value = mobile.user;
+        document.getElementById("status").value = mobile.status;
+
+        document.getElementById("formTitle").textContent = "✏️ Edit Mobile";
+      }
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const id = document.getElementById("id").value;
+      const brand = document.getElementById("brand").value;
+      const model = document.getElementById("model").value;
+      const user = document.getElementById("user").value;
+      const status = document.getElementById("status").value;
+
+      let mobiles = JSON.parse(localStorage.getItem("mobiles")) || [];
+
+      if (editIndex !== null) {
+        mobiles[editIndex] = { id, brand, model, user, status };
+        localStorage.removeItem("editIndex");
+      } else {
+        mobiles.push({ id, brand, model, user, status });
+      }
+
+      localStorage.setItem("mobiles", JSON.stringify(mobiles));
+      window.location.href = "index.html";
+    });
+
+    function cancelAction() {
+      localStorage.removeItem("editIndex"); // clear edit mode
+      window.location.href = "index.html"; // redirect without saving
+    }
+  </script>
+</body>
+</html>
