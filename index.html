@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Office Mobile Inventory</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .add-btn {
+      background: #28a745;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .add-btn:hover {
+      background: #218838;
+    }
+
+    .add-btn span {
+      margin-right: 8px;
+      font-size: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: auto;
+      background: white;
+      font-size: 16px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background: #343a40;
+      color: white;
+      font-size: 16px;
+    }
+
+    td {
+      color: #333;
+    }
+
+    .action-btn {
+      display: inline-block;
+      margin: 5px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .delete-btn {
+      border: 1px solid #dc3545;
+      color: #dc3545;
+      background: #fff5f5;
+    }
+
+    .delete-btn:hover {
+      background: #dc3545;
+      color: white;
+    }
+
+    .edit-btn {
+      border: 1px solid #007bff;
+      color: #007bff;
+      background: #f0f8ff;
+    }
+
+    .edit-btn:hover {
+      background: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📱 Office Mobile Inventory</h1>
+    
+    <!-- Link to Add Mobile Page -->
+    <a href="add_mobile.html" class="add-btn"><span>➕</span>Add New Mobile</a>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Serial Number</th>
+          <th>ID</th>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>User</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="mobileTableBody">
+        <!-- Dynamic rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Load mobiles from localStorage
+    function loadMobiles() {
+      let mobiles = JSON.parse(localStorage.getItem("mobiles")) || [];
+      let tableBody = document.getElementById("mobileTableBody");
+      tableBody.innerHTML = "";
+
+      mobiles.forEach((mobile, index) => {
+        let row = `<tr>
+          <td>${index + 1}</td>
+          <td>${mobile.id}</td>
+          <td>${mobile.brand}</td>
+          <td>${mobile.model}</td>
+          <td>${mobile.user}</td>
+          <td>${mobile.status}</td>
+          <td>
+            <a href="#" onclick="editMobile('${mobile.id}')" class="action-btn edit-btn">✏ Edit</a>
+            <a href="#" onclick="deleteMobile('${mobile.id}')" class="action-btn delete-btn">🗑 Delete</a>
+          </td>
+        </tr>`;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    // Delete mobile by ID
+    function deleteMobile(id) {
+      let mobiles = JSON.parse(localStorage.getItem("mobiles")) || [];
+      mobiles = mobiles.filter(mobile => mobile.id !== id);
+      localStorage.setItem("mobiles", JSON.stringify(mobiles));
+      loadMobiles();
+    }
+
+    // Edit mobile by ID
+    function editMobile(id) {
+      let mobiles = JSON.parse(localStorage.getItem("mobiles")) || [];
+      let index = mobiles.findIndex(m => m.id === id);
+      if (index === -1) return;
+
+      let mobile = mobiles[index];
+      let newBrand = prompt("Enter new brand:", mobile.brand);
+      let newModel = prompt("Enter new model:", mobile.model);
+      let newUser = prompt("Enter new user:", mobile.user);
+      let newStatus = prompt("Enter new status (Working / Not Working / Damaged / Repair):", mobile.status);
+
+      if (newBrand && newModel && newUser && newStatus) {
+        mobiles[index] = {
+          id: mobile.id, // keep the same ID
+          brand: newBrand,
+          model: newModel,
+          user: newUser,
+          status: newStatus
+        };
+        localStorage.setItem("mobiles", JSON.stringify(mobiles));
+        loadMobiles();
+      }
+    }
+
+    // Load table on page load
+    window.onload = loadMobiles;
+  </script>
+</body>
+</html>
