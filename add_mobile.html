@@ -32,12 +32,15 @@
       margin: 10px 0 5px;
       font-weight: bold;
     }
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 8px;
       margin-bottom: 12px;
       border-radius: 6px;
       border: 1px solid #ccc;
+    }
+    textarea {
+      resize: vertical;
     }
     .button-group {
       display: flex;
@@ -94,6 +97,17 @@
         <option value="Repair">Repair</option>
       </select>
 
+      <!-- New Fields Start -->
+      <label for="accessories">Accessories Included (Charger, Cable, Case, SIM):</label>
+      <input type="text" id="accessories" name="accessories">
+
+      <label for="assigned">Assigned User / Project (if applicable):</label>
+      <input type="text" id="assigned" name="assigned">
+
+      <label for="remarks">Remarks (Notes about issues, special setup):</label>
+      <textarea id="remarks" name="remarks" rows="3"></textarea>
+      <!-- New Fields End -->
+
       <div class="button-group">
         <button type="submit" class="save-btn">💾 Save Mobile</button>
         <button type="button" class="cancel-btn" onclick="cancelAction()">❌ Cancel</button>
@@ -115,6 +129,9 @@
         document.getElementById("model").value = mobile.model;
         document.getElementById("user").value = mobile.user;
         document.getElementById("status").value = mobile.status;
+        document.getElementById("accessories").value = mobile.accessories || "";
+        document.getElementById("assigned").value = mobile.assigned || "";
+        document.getElementById("remarks").value = mobile.remarks || "";
 
         document.getElementById("formTitle").textContent = "✏️ Edit Mobile";
       }
@@ -128,14 +145,17 @@
       const model = document.getElementById("model").value;
       const user = document.getElementById("user").value;
       const status = document.getElementById("status").value;
+      const accessories = document.getElementById("accessories").value;
+      const assigned = document.getElementById("assigned").value;
+      const remarks = document.getElementById("remarks").value;
 
       let mobiles = JSON.parse(localStorage.getItem("mobiles")) || [];
 
       if (editIndex !== null) {
-        mobiles[editIndex] = { id, brand, model, user, status };
+        mobiles[editIndex] = { id, brand, model, user, status, accessories, assigned, remarks };
         localStorage.removeItem("editIndex");
       } else {
-        mobiles.push({ id, brand, model, user, status });
+        mobiles.push({ id, brand, model, user, status, accessories, assigned, remarks });
       }
 
       localStorage.setItem("mobiles", JSON.stringify(mobiles));
